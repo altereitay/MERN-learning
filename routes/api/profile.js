@@ -80,25 +80,22 @@ router.post('/',[auth,
     if (instagram) profileFields.social.instagram = instagram;
 
     try {
-        console.log(req.user.id)
-        let profile =  Profile.findOne({user: req.user.id})
+        let profile = await Profile.exists({user: req.user.id})
         if (profile){
-            console.log('debug 1')
-            profile = await Profile.findOneAndUpdate({user: req.user.id},
+            let profile = await Profile.findOneAndUpdate({user: req.user.id},
                 {
                 $set: profileFields
                 },
                 {
                     new: true
                 });
-            console.log('debug 2')
+            await profile.save();
             return res.json(profile)
+        }else {
+            profile = new Profile(profileFields);
+            await profile.save();
+            res.json(profile);
         }
-
-        profile = new Profile(profileFields);
-        await profile.save();
-        res.json(profile);
-
     }catch (e) {
         if (e){
             console.error(e.message)
@@ -107,6 +104,44 @@ router.post('/',[auth,
     }
 })
 
+/**
+ *@route   GET api/profile
+ *@desc    get all profile
+ *@access  public
+ */
+
+router.get('/', async (req, res)=>{
+    try {
+        const profiles = await Profile.find().populate('user', ['name', 'avatar']);
+        res.json(profiles)
+
+    }catch (e) {
+        console.error(e.message);
+        res.status(500).send('Server error')
+    }
+})
+
+/**
+ *@route   GET api/profile/user/:user_id
+ *@desc    get profile be user id
+ *@access  public
+ */
+
+router.get('/user/:user_id', async (req, res)=>{
+    try {
+        const profile = await Profile.findOne({user: req.params.user_id}).populate('user', ['name', 'avatar']);
+        if(!profile){
+            return res.status(400).json({msg:'there is no profile'})
+        }
+        res.json(profile)
+    }catch (e) {
+        console.error(e.message);
+        if (e.kind === 'ObjectId'){
+            return res.status(400).json({msg:'profile not found'})
+        }
+        res.status(500).send('Server error')
+    }
+})
 
 
 module.exports = router;
