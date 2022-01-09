@@ -211,6 +211,62 @@ router.put('/experience', auth, [
     }
 })
 
+/**
+ *@route   PATCH api/profile/experience
+ *@desc    edit profile experience
+ *@access  private
+ */
+
+router.patch('/experience', auth, async (req, res)=>{
+
+    const{
+        title,
+        company,
+        location,
+        from,
+        to,
+        current,
+        description
+    } = req.body;
+
+    const newExp = {
+        title,
+        company,
+        location,
+        from,
+        to,
+        current,
+        description
+    }
+    try {
+        const profile = await Profile.findOne({user: req.user.id});
+        const {
+            currTitle,
+            currCompany,
+            currLocation,
+            currFrom,
+            currTo,
+            currCurrent,
+            currDescription
+        } = profile.experience[0];
+        const updated = {
+            title: newExp.title !== currTitle? newExp.title:currTitle,
+            company: newExp.company !== currCompany? newExp.company:currCompany,
+            location: newExp.location !== currLocation? newExp.location:currLocation,
+            from: newExp.from !== currFrom? newExp.from:currFrom,
+            to: newExp.to !== currTo? newExp.to:currTo,
+            current: newExp.current !== currCurrent? newExp.current:currCurrent,
+            description: newExp.description !== currDescription? newExp.description:currDescription
+        }
+        let updatedProfile = await Profile.findOneAndUpdate({user: req.user.id},{experience: updated}, {new:true});
+        await updatedProfile.save();
+        res.json(updatedProfile);
+    }catch (e) {
+        console.error(e.message);
+        res.status(500).send('Server error')
+    }
+})
+
 
 /**
  *@route   DELETE api/profile/experience/:exp_id
