@@ -9,7 +9,7 @@ const jwt = require("jsonwebtoken");
 const config = require("config");
 /**
  *@route    GET api/users
- *@desc     Test route
+ *@desc     get user by token
  *@access  Public
  */
 
