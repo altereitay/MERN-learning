@@ -211,6 +211,62 @@ router.put('/experience', auth, [
     }
 })
 
+/**
+ *@route   PATCH api/profile/experience
+ *@desc    edit profile experience
+ *@access  private
+ */
+
+router.patch('/experience', auth, async (req, res)=>{
+
+    const{
+        title,
+        company,
+        location,
+        from,
+        to,
+        current,
+        description
+    } = req.body;
+
+    const newExp = {
+        title,
+        company,
+        location,
+        from,
+        to,
+        current,
+        description
+    }
+    try {
+        const profile = await Profile.findOne({user: req.user.id});
+        const {
+            currTitle,
+            currCompany,
+            currLocation,
+            currFrom,
+            currTo,
+            currCurrent,
+            currDescription
+        } = profile.experience[0];
+        const updated = {
+            title: newExp.title !== currTitle? newExp.title:currTitle,
+            company: newExp.company !== currCompany? newExp.company:currCompany,
+            location: newExp.location !== currLocation? newExp.location:currLocation,
+            from: newExp.from !== currFrom? newExp.from:currFrom,
+            to: newExp.to !== currTo? newExp.to:currTo,
+            current: newExp.current !== currCurrent? newExp.current:currCurrent,
+            description: newExp.description !== currDescription? newExp.description:currDescription
+        }
+        let updatedProfile = await Profile.findOneAndUpdate({user: req.user.id},{experience: updated}, {new:true});
+        await updatedProfile.save();
+        res.json(updatedProfile);
+    }catch (e) {
+        console.error(e.message);
+        res.status(500).send('Server error')
+    }
+})
+
 
 /**
  *@route   DELETE api/profile/experience/:exp_id
@@ -237,18 +293,21 @@ router.delete('/experience/:exp_id', auth, async (req, res)=>{
  *@access  private
  */
 
-router.put('/education', auth, [
+router.put('/education', auth,
+    [
     check('school', 'school is required').not().isEmpty(),
     check('degree', 'degree is required').not().isEmpty(),
     check('from', 'from date is required').not().isEmpty(),
     check('fieldofstudy', 'filed of study date is required').not().isEmpty()
-], async (req, res)=>{
+],
+    async (req, res)=>{
 
     const errors = validationResult(req);
     if (!errors.isEmpty()){
         return res.status(400).json({errors: errors.array()});
     }
-    const {
+    console.log('put edu')
+    const{
         school,
         degree,
         fieldofstudy,
@@ -272,6 +331,62 @@ router.put('/education', auth, [
         profile.education.unshift(newEdu);
         await profile.save();
         res.json(profile);
+    }catch (e) {
+        console.error(e.message);
+        res.status(500).send('Server error')
+    }
+})
+
+/**
+ *@route   PATCH api/profile/education
+ *@desc    edit profile education
+ *@access  private
+ */
+
+router.patch('/education', auth, async (req, res)=>{
+    const {
+        school,
+        degree,
+        fieldofstudy,
+        from,
+        to,
+        current,
+        description
+    } = req.body;
+
+    const newEdu = {
+        school,
+        degree,
+        fieldofstudy,
+        from,
+        to,
+        current,
+        description
+    }
+    try {
+        const profile = await Profile.findOne({user: req.user.id});
+        const {
+            currSchool,
+            currDegree,
+            currFieldOfStudy,
+            currFrom,
+            currTo,
+            currCurrent,
+            currDescription
+        } = profile.education[0];
+        const updated = {
+            school: newEdu.school !== currSchool? newEdu.school : currSchool,
+            degree: newEdu.degree !== currDegree? newEdu.degree : currDegree,
+            fieldofstudy: newEdu.fieldofstudy !== currFieldOfStudy? newEdu.fieldofstudy : currFieldOfStudy,
+            from: newEdu.from !== currFrom? newEdu.from : currFrom,
+            to: newEdu.to !== currTo? newEdu.to : currTo,
+            current: newEdu.current !== currCurrent? newEdu.current : currCurrent,
+            description: newEdu.description !== currDescription? newEdu.description : currDescription
+        }
+        console.log(updated)
+        let updatedProfile = await Profile.findOneAndUpdate({user: req.user.id},{education: updated}, {new:true});
+        await updatedProfile.save();
+        res.json(updatedProfile);
     }catch (e) {
         console.error(e.message);
         res.status(500).send('Server error')
