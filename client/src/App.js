@@ -13,6 +13,7 @@ import { loadUser } from "./actions/auth";
 import Dashboard from "./components/dashboard/Dashboard";
 import PrivateRoute from "./components/routing/PrivateRoute";
 import CreateProfile from "./components/profile-forms/CreateProfile";
+import EditProfile from "./components/profile-forms/EditProfile";
 
 
 if(localStorage.token){
@@ -38,6 +39,7 @@ const App = () =>{
                             <Route exact path='/login' element={<Login/>}/>
                             <Route path="/dashboard" element={<PrivateRoute component={Dashboard} />}/>
                             <Route path='/create-profile' element={<PrivateRoute component={CreateProfile} />}/>
+                            <Route path='/edit-profile' element={<PrivateRoute component={EditProfile} />}/>
                         </Routes>
                     </section>
                 </Fragment>
