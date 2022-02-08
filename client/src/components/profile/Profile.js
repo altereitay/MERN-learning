@@ -4,6 +4,8 @@ import { connect } from "react-redux";
 import Spinner from "../layout/Spinner";
 import { getProfileById } from "../../actions/profile";
 import { Link, useParams } from "react-router-dom";
+import ProfileTop from "./ProfileTop";
+import ProfileAbout from "./ProfileAbout";
 const Profile = ({getProfileById, profile: {profile, loading},auth}) => {
     const {id} = useParams()
     useEffect(() => {
@@ -11,7 +13,7 @@ const Profile = ({getProfileById, profile: {profile, loading},auth}) => {
     }, [getProfileById, id])
     return (
         <Fragment>
-            {profile === null || loading ? <Spinner/> :
+            {profile === null || loading ? <Spinner/> :(
                 <Fragment>
                     <Link to='/profiles' className='btn btn-light'>Back to profiles</Link>
                     {auth.isAuthenticated &&
@@ -21,8 +23,12 @@ const Profile = ({getProfileById, profile: {profile, loading},auth}) => {
                             Edit Profile
                         </Link>
                     )}
+                    <div className="profile-grid my-1">
+                        <ProfileTop profile={profile}/>
+                        <ProfileAbout profile={profile}/>
+                    </div>
                 </Fragment>
-            }
+            )}
         </Fragment>
     )
 }
