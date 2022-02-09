@@ -77,6 +77,7 @@ const EditProfile = ({profile: {profile, loading}, createProfile, getCurrentProf
             <small>* = required field</small>
             <form className="form" onSubmit={e=> onSubmit(e)}>
                 <div className="form-group">
+                    <h3 className='text-dark'>* Occupation Status:</h3>
                     <select name="status" value={status} onChange={(e)=> onChange(e)}>
                         <option value="0">* Select Professional Status</option>
                         <option value="Developer">Developer</option>
@@ -93,28 +94,34 @@ const EditProfile = ({profile: {profile, loading}, createProfile, getCurrentProf
                     >
                 </div>
                 <div className="form-group">
+                    <h3 className='text-dark'>Company Name:</h3>
                     <input type="text" placeholder="Company" name="company" value={company} onChange={(e)=> onChange(e)}/>
                     <small className="form-text">Could be your own company or one you work for</small>
                 </div>
                 <div className="form-group">
+                    <h3 className='text-dark'>Website:</h3>
                     <input type="text" placeholder="Website" name="website" value={website} onChange={(e)=> onChange(e)}/>
                     <small className="form-text">Could be your own or a company website</small>
                 </div>
                 <div className="form-group">
+                    <h3 className='text-dark'>Location:</h3>
                     <input type="text" placeholder="Location" name="location" value={location} onChange={(e)=> onChange(e)}/>
                     <small className="form-text">City & state suggested (eg. Boston, MA)</small>
                 </div>
                 <div className="form-group">
+                    <h3 className='text-dark'>* Skills:</h3>
                     <input type="text" placeholder="* Skills" name="skills" value={skills} onChange={(e)=> onChange(e)}/>
                     <small className="form-text">Please use comma separated values (eg. HTML,CSS,JavaScript,PHP)</small>
                 </div>
                 <div className="form-group">
+                    <h2 className='text-dark'>GitHub Username:</h2>
                     <input type="text" placeholder="Github Username" name="githubusername" value={githubusername} onChange={(e)=> onChange(e)}/>
                     <small className="form-text">
                         If you want your latest repos and a Github link, include your username
                     </small>
                 </div>
                 <div className="form-group">
+                    <h3 className='text-dark'>Personal bio:</h3>
                     <textarea placeholder="A short bio of yourself" name="bio" value={bio} onChange={(e) => onChange(e)}/>
                     <small className="form-text">Tell us a little about yourself</small>
                 </div>
