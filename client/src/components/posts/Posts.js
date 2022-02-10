@@ -17,10 +17,7 @@ const Posts = ({getPosts, post:{ posts, loading}}) => {
               <i className='fas fa-user'/>Welcome to the community
             </p>
             {/*PostForm*/}
-              {console.log('posts', typeof(posts[0]), Array.isArray(posts[0].likes), posts[0].likes)}
-            {posts.map(post=>(
-              <PostItem key={post._id} post={post}/>
-            ))}
+            {posts.map(post=>(<PostItem key={post._id} post={post}/>))}
           </Fragment>
   )
 }
