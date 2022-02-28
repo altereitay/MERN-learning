@@ -213,12 +213,12 @@ router.put('/experience', auth, [
 })
 
 /**
- *@route   PATCH api/profile/experience
+ *@route   PATCH api/profile/experience/:exp_id
  *@desc    edit profile experience
  *@access  private
  */
 
-router.patch('/experience', auth, async (req, res)=>{
+router.patch('/experience/:exp_id', auth, async (req, res)=>{
 
     const{
         title,
@@ -230,7 +230,7 @@ router.patch('/experience', auth, async (req, res)=>{
         description
     } = req.body;
 
-    const newExp = {
+    const editedExp = {
         title,
         company,
         location,
@@ -241,6 +241,8 @@ router.patch('/experience', auth, async (req, res)=>{
     }
     try {
         const profile = await Profile.findOne({user: req.user.id});
+        const changeIndex = profile.experience.map(exp => exp.id).indexOf(req.params.exp_id);
+        let allExps = profile.experience;
         const {
             currTitle,
             currCompany,
@@ -249,17 +251,18 @@ router.patch('/experience', auth, async (req, res)=>{
             currTo,
             currCurrent,
             currDescription
-        } = profile.experience[0];
+        } = profile.experience[changeIndex];
         const updated = {
-            title: newExp.title !== currTitle? newExp.title:currTitle,
-            company: newExp.company !== currCompany? newExp.company:currCompany,
-            location: newExp.location !== currLocation? newExp.location:currLocation,
-            from: newExp.from !== currFrom? newExp.from:currFrom,
-            to: newExp.to !== currTo? newExp.to:currTo,
-            current: newExp.current !== currCurrent? newExp.current:currCurrent,
-            description: newExp.description !== currDescription? newExp.description:currDescription
+            title: editedExp.title !== currTitle? editedExp.title:currTitle,
+            company: editedExp.company !== currCompany? editedExp.company:currCompany,
+            location: editedExp.location !== currLocation? editedExp.location:currLocation,
+            from: editedExp.from !== currFrom? editedExp.from:currFrom,
+            to: editedExp.to !== currTo? editedExp.to:currTo,
+            current: editedExp.current !== currCurrent? editedExp.current:currCurrent,
+            description: editedExp.description !== currDescription? editedExp.description:currDescription
         }
-        let updatedProfile = await Profile.findOneAndUpdate({user: req.user.id},{experience: updated}, {new:true});
+        allExps[changeIndex] = updated;
+        let updatedProfile = await Profile.findOneAndUpdate({user: req.user.id},{experience: allExps}, {new:true});
         await updatedProfile.save();
         res.json(updatedProfile);
     }catch (e) {
@@ -338,12 +341,12 @@ router.put('/education', auth,
 })
 
 /**
- *@route   PATCH api/profile/education
+ *@route   PATCH api/profile/education/:edu_id
  *@desc    edit profile education
  *@access  private
  */
 
-router.patch('/education', auth, async (req, res)=>{
+router.patch('/education/:edu_id', auth, async (req, res)=>{
     const {
         school,
         degree,
@@ -365,6 +368,8 @@ router.patch('/education', auth, async (req, res)=>{
     }
     try {
         const profile = await Profile.findOne({user: req.user.id});
+        let allEdus = profile.education;
+        const changeIndex = profile.education.map(edu => edu.id).indexOf(req.params.edu_id);
         const {
             currSchool,
             currDegree,
@@ -373,7 +378,7 @@ router.patch('/education', auth, async (req, res)=>{
             currTo,
             currCurrent,
             currDescription
-        } = profile.education[0];
+        } = profile.education[changeIndex];
         const updated = {
             school: newEdu.school !== currSchool? newEdu.school : currSchool,
             degree: newEdu.degree !== currDegree? newEdu.degree : currDegree,
@@ -383,8 +388,8 @@ router.patch('/education', auth, async (req, res)=>{
             current: newEdu.current !== currCurrent? newEdu.current : currCurrent,
             description: newEdu.description !== currDescription? newEdu.description : currDescription
         }
-        console.log(updated)
-        let updatedProfile = await Profile.findOneAndUpdate({user: req.user.id},{education: updated}, {new:true});
+        allEdus[changeIndex] = updated;
+        let updatedProfile = await Profile.findOneAndUpdate({user: req.user.id},{education: allEdus}, {new:true});
         await updatedProfile.save();
         res.json(updatedProfile);
     }catch (e) {
