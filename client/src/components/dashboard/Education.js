@@ -1,8 +1,9 @@
-import React, {Fragment} from "react";
+import React, { Fragment} from "react";
 import PropTypes from "prop-types";
 import Moment from "react-moment";
-import {deleteEducation} from "../../actions/profile";
+import { deleteEducation,  } from "../../actions/profile";
 import {connect} from "react-redux";
+import EditEducation from "../profile-forms/EditEducation";
 
 const Education = ({education, deleteEducation}) =>{
     const educations = education.map(edu =>(
@@ -11,8 +12,11 @@ const Education = ({education, deleteEducation}) =>{
             <td className='hide-sm'>{edu.degree}</td>
             <td>
                 <Moment format='DD/MM/YYYY'>{edu.from}</Moment> - {
-                edu.to === undefined? ('Current') : (<Moment format='DD/MM/YYYY'>{edu.to}</Moment>
+                edu.current || edu.to === undefined? ('Current') : (<Moment format='DD/MM/YYYY'>{edu.to}</Moment>
                 )}
+            </td>
+            <td>
+               <EditEducation edu={edu} />
             </td>
             <td>
                 <button className='btn btn-danger' onClick={()=>deleteEducation(edu._id)}>Delete</button>
@@ -28,6 +32,7 @@ const Education = ({education, deleteEducation}) =>{
                     <th>School</th>
                     <th className='hide-sm'>Degree</th>
                     <th className='hide-sm'>Years</th>
+                    <th/>
                     <th/>
                 </tr>
                 </thead>
