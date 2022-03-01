@@ -1,8 +1,12 @@
 import React, { useState } from "react";
 import { Segment, TransitionablePortal } from "semantic-ui-react";
 import PropTypes from "prop-types";
+import {editExperience} from "../../actions/profile";
+import {useNavigate} from "react-router-dom";
+import { connect } from "react-redux";
 
-const EditExperience = ({exp}) =>{
+const EditExperience = ({exp, editExperience}) =>{
+    const navigate = useNavigate();
     const [open, setOpen] = useState(false);
     const [formData, setDormData] = useState({
         company: exp.company,
@@ -20,8 +24,8 @@ const EditExperience = ({exp}) =>{
         to,
         current,
         description} = formData;
-    const temp = from.split('T')[0];
-    console.log(temp)
+    const fromDateToShow = from.split('T')[0];
+    const toDateToShow = to?.split('T')[0];
     const onChange = e =>{
         setDormData({...formData, [e.target.name]: e.target.value});
     }
@@ -38,7 +42,8 @@ const EditExperience = ({exp}) =>{
                 <small>* = required field</small>
                 <form className="form" onSubmit={e => {
                     e.preventDefault();
-                    //addExperience(formData);
+                    editExperience(formData, exp._id, navigate);
+                    setOpen(false);
                 }}>
                     <div className="form-group">
                         <input type="text" placeholder="* Job Title" name="title" value={title}
@@ -54,7 +59,7 @@ const EditExperience = ({exp}) =>{
                     </div>
                     <div className="form-group">
                         <h5>From Date</h5>
-                        <input type="date" name="from" value={temp} onChange={e => onChange(e)}/>
+                        <input type="date" name="from" value={fromDateToShow} onChange={e => onChange(e)}/>
                     </div>
                     <div className="form-group">
                         <p><input type="checkbox" name="current" checked={current} value={current}
@@ -65,7 +70,7 @@ const EditExperience = ({exp}) =>{
                     </div>
                     <div className="form-group">
                         <h6>To Date</h6>
-                        <input type="date" name="to" value={to} onChange={e => onChange(e)}
+                        <input type="date" name="to" value={toDateToShow} onChange={e => onChange(e)}
                                disabled={toDateDisabled ? 'disabled' : ''}/>
                     </div>
                     <div className="form-group">
@@ -84,7 +89,8 @@ const EditExperience = ({exp}) =>{
 }
 
 EditExperience.propTypes = {
-    exp: PropTypes.object.isRequired
+    exp: PropTypes.object.isRequired,
+    editExperience: PropTypes.func.isRequired
 }
 
-export default EditExperience;
+export default connect(null, {editExperience})(EditExperience);
